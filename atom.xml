@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[Smile]]></title>
+  <subtitle><![CDATA[微笑面对挑战，走上人生巅峰]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2015-11-22T08:10:00.744Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name><![CDATA[Zhiguo Wang]]></name>
+    <email><![CDATA[zgbeam@qq.com]]></email>
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[my first post]]></title>
+    <link href="http://yoursite.com/2015/11/22/my-first-post/"/>
+    <id>http://yoursite.com/2015/11/22/my-first-post/</id>
+    <published>2015-11-22T08:10:00.000Z</published>
+    <updated>2015-11-22T08:10:00.744Z</updated>
+    <content type="html"></content>
+    <summary type="html">
+    
+    </summary>
+    
+  </entry>
+  
+</feed>
