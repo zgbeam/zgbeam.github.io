@@ -18,7 +18,7 @@
     <title><![CDATA[JSP开发中文乱码总结]]></title>
     <link href="http://zgbeam.github.io/2015/12/15/JSP%E5%BC%80%E5%8F%91%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E6%80%BB%E7%BB%93/"/>
     <id>http://zgbeam.github.io/2015/12/15/JSP开发中文乱码总结/</id>
-    <published>2015-12-15T01:05:58.767Z</published>
+    <published>2015-12-15T01:11:21.922Z</published>
     <updated>2015-12-15T01:05:58.767Z</updated>
     <content type="html"><![CDATA[<p>在开发过程中，经常遇到中文乱码问题，以前总是解决就好，并没有对该问题总结一下，现在来总结一下开发过程中常见的中文乱码问题。</p>
 <p>一、有必要了解一些基本的编码知识：</p>
@@ -79,19 +79,6 @@
       <category term="JSP 中文乱码" scheme="http://zgbeam.github.io/tags/JSP-%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81/"/>
     
       <category term="J2EE" scheme="http://zgbeam.github.io/categories/J2EE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[my second post]]></title>
-    <link href="http://zgbeam.github.io/2015/11/24/my-second-post/"/>
-    <id>http://zgbeam.github.io/2015/11/24/my-second-post/</id>
-    <published>2015-11-24T00:50:09.000Z</published>
-    <updated>2015-11-24T00:50:09.226Z</updated>
-    <content type="html"></content>
-    <summary type="html">
-    
-    </summary>
     
   </entry>
   
