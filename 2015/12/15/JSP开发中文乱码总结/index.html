@@ -216,7 +216,7 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-12-15T00:43:53.135Z"><a href="/2015/12/15/JSP开发中文乱码总结/">2015-12-15</a></time>
+        <time datetime="2015-12-15T01:05:58.767Z"><a href="/2015/12/15/JSP开发中文乱码总结/">2015-12-15</a></time>
       
       
   
@@ -240,8 +240,9 @@
 <li>request.setCharacterEncoding()<br>可用在servlet和jsp页面中，作用是设置对客户端请求进行重新编码的编码，即post方式提交的数据进行编码。</li>
 <li>response.setCharacterEncoding()<br>与&lt;%@ page contentType=”text/html;charset=UTF-8”%&gt;一样。</li>
 <li>response.setContentType()<br>与&lt;%@ page contentType=”text/html;charset=UTF-8”%&gt;一样。 </li>
-<li>response.setHeader(“Content-Type”,”text/html;charset=UTF-8”)<br>可用在servlet和jsp页面中，与&lt; META http-equiv=”Content-Type” content=”text/html; charset=UTF-8”&gt;一样。  <font color="red">注意：上文1,2,3中有部分功能是一样的，是有优先级的，在读取jsp文件时，1&gt;2；在对服务器响应进行编码的时候，2&gt;1&gt;3，一般情况下，1，2都写。</font></li>
+<li>response.setHeader(“Content-Type”,”text/html;charset=UTF-8”)<br>可用在servlet和jsp页面中，与&lt; META http-equiv=”Content-Type” content=”text/html; charset=UTF-8”&gt;一样。 </li>
 </ol>
+<p><font color="red">注意：上文1,2,3中有部分功能是一样的，是有优先级的，在读取jsp文件时，1&gt;2；在对服务器响应进行编码的时候，2&gt;1&gt;3，一般情况下，1，2都写。</font></p>
 <ul>
 <li>http请求默认以”ISO-8859-1”的编码来传送URL的。</li>
 </ul>
@@ -263,11 +264,16 @@
 </ol>
 <p>三、原理</p>
 <p>我们通过上面的方法可以解决乱码问题，下面讲讲原理：</p>
-<p>客户端发来的数据都是经过一定格式编码的，类似于：String parameterName = “中国”.getBytes(“UTF-8”)，然后将数据发过来。</p>
-<p>客户端接受数据，request.getParameter(“”)的作用就是对接收到的数据进行解码，默认使用ISO-8859-1进行解码，可以使用request.setCharacterEncoding(“”)进行设置，但仅对post有用。假如我们使用默认的ISO-8859-1，肯定乱码，因为编码跟解码不一致，那此时怎么办呢，引出了上文中的两种解决方案：使用request.setCharacterEncoding(“”)改变request.getParameter(“”)的解码方式或者new String(request.getParameter(“parameterName”).getBytes(“ISO-8859-1”)，”charset的值”)将request.getParameter(“”)解码的数据重新编码再解码。</p>
+<ul>
+<li><p>客户端发来的数据都是经过一定格式编码的，类似于：String parameterName = “中国”.getBytes(“UTF-8”)，然后将数据发过来。</p>
+</li>
+<li><p>客户端接受数据，request.getParameter(“”)的作用就是对接收到的数据进行解码，默认使用ISO-8859-1进行解码，可以使用request.setCharacterEncoding(“”)进行设置，但仅对post有用。假如我们使用默认的ISO-8859-1，肯定乱码，因为编码跟解码不一致，那此时怎么办呢，引出了上文中的两种解决方案：使用request.setCharacterEncoding(“”)改变request.getParameter(“”)的解码方式或者new String(request.getParameter(“parameterName”).getBytes(“ISO-8859-1”)，”charset的值”)将request.getParameter(“”)解码的数据重新编码再解码。</p>
+</li>
+</ul>
 <p>四、其他</p>
-<p>在jsp中的页面使用response.setContentType()等设置字符集会破坏jsp容器自身的页面编码，会引起html中字符乱码，脚本不会乱，所以不建议设置，在开发中使用page指令设置字符集。</p>
+<p>在jsp中的页面使用response.setContentType()等设置字符集会破坏jsp容器自身的页面编码，会引起html中字符乱码，脚本不会乱，所以不建议设置。在开发中多采用page指令设置字符集。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">	response.setContentType("text/html;charset=UTF-8");</span><br><span class="line">	String str = new String("你好".getBytes("iso-8859-1"),"utf-8");</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;p&gt;你好&lt;/p&gt;</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;%=str %&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="http://zgbeam.github.io/img/setContent.png" alt="setContent"></p>
 
       
     </div>
@@ -282,7 +288,7 @@
         
   
   <div class="tags">
-    <a href="/tags/JSP/">JSP</a>, <a href="/tags/中文乱码/">中文乱码</a>
+    <a href="/tags/JSP-中文乱码/">JSP 中文乱码</a>
   </div>
 
 <!-- Baidu Button BEGIN -->
@@ -361,7 +367,7 @@ var duoshuoQuery = {short_name:"zgbeam"};
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/JSP/" style="font-size: 10px;">JSP</a> <a href="/tags/中文乱码/" style="font-size: 10px;">中文乱码</a>
+    <a href="/tags/JSP-中文乱码/" style="font-size: 10px;">JSP 中文乱码</a>
   </div>
 </div>
 
