@@ -4,7 +4,7 @@
   <subtitle><![CDATA[微笑面对挑战，走上人生巅峰]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://zgbeam.github.io/"/>
-  <updated>2015-12-15T01:05:58.767Z</updated>
+  <updated>2015-12-15T01:37:07.179Z</updated>
   <id>http://zgbeam.github.io/</id>
   
   <author>
@@ -13,6 +13,73 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[JSP开发中文乱码总结]]></title>
+    <link href="http://zgbeam.github.io/2015/12/15/JSP%E5%BC%80%E5%8F%91%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E6%80%BB%E7%BB%93/"/>
+    <id>http://zgbeam.github.io/2015/12/15/JSP开发中文乱码总结/</id>
+    <published>2015-12-15T01:37:07.179Z</published>
+    <updated>2015-12-15T01:37:07.179Z</updated>
+    <content type="html"><![CDATA[<p>在开发过程中，经常遇到中文乱码问题，以前总是解决就好，并没有对该问题总结一下，现在来总结一下开发过程中常见的中文乱码问题。</p>
+<p>一、有必要了解一些基本的编码知识：</p>
+<ul>
+<li>这篇<a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="external">字符编码笔记</a>是必读的</li>
+<li>jsp的三次编码<br>第一阶段：JVM将.jsp文件编译为.java文件。JVM先读取pageEncoding的值，根据该值去读取.jsp文件，然后由指定的编码方案生成UTF-8的.java文件。<br>第二阶段：JVM将.java文件转换为.class文件，从UTF-8至UTF-8。这个过程就与任何编码的设置都没有关系了，经过这个阶段后.java文件就转换成了统一的UTF-8编码的.class文件了。<br>第三阶段：服务器将处理的结果返回给浏览器，这个阶段则依靠contentType的charset，如果设置了charset则浏览器就会使用指定的编码格式进行解码，否则采用默认的ISO-8859-1编码格式进行解码处理。</li>
+<li>jsp中的编码设置：<ol>
+<li>pageEncoding:&lt;%@ page pageEncoding=”UTF-8”%&gt;<br>上文中第一阶段，使用该值去读取jsp文件，为避免中文乱码，跟jsp文件编码一致；对服务器响应进行重新编码，即jsp的输出流在浏览器中显示的编码<font color="red">（不是主要作用）</font>。</li>
+<li>contentType: &lt;%@ page contentType=”text/html;charset=UTF-8”%&gt; </li>
+<li>对服务器响应进行重新编码，即jsp的输出流在浏览器中显示的编码；对表单get和post请求数据编码；上文中第一阶段，使用该值去读取jsp文件<font color="red">（不是主要作用）</font>。</li>
+<li>&lt; META http-equiv=”Content-Type” content=”text/html;charset=UTF-8”&gt;<br>网页的编码信息 ，说明页面制作所使用的编码。</li>
+<li>request.setCharacterEncoding()<br>可用在servlet和jsp页面中，作用是设置对客户端请求进行重新编码的编码，即post方式提交的数据进行编码。</li>
+<li>response.setCharacterEncoding()<br>与&lt;%@ page contentType=”text/html;charset=UTF-8”%&gt;一样。</li>
+<li>response.setContentType()<br>与&lt;%@ page contentType=”text/html;charset=UTF-8”%&gt;一样。 </li>
+<li>response.setHeader(“Content-Type”,”text/html;charset=UTF-8”)<br>可用在servlet和jsp页面中，与&lt; META http-equiv=”Content-Type” content=”text/html; charset=UTF-8”&gt;一样。 </li>
+</ol>
+</li>
+</ul>
+<p><font color="red">注意：上文1,2,3中有部分功能是一样的，是有优先级的，在读取jsp文件时，1&gt;2；在对服务器响应进行编码的时候，2&gt;1&gt;3，一般情况下，1，2都写。</font></p>
+<ul>
+<li>http请求默认以”ISO-8859-1”的编码来传送URL的。</li>
+</ul>
+<p>二、中文乱码的几种情况及最简单的解决方案：</p>
+<ul>
+<li>pageEncoding设置错误<br>pageEncoding设置为jsp文件的编码类型。</li>
+<li>查询字符串包含中文<br>中文的编码方式取决于浏览器，chrome为UTF-8，IE为GB2312，这是由于浏览器并没有遵循URI编码规范。有两种解决方法：<ol>
+<li>开发过程中，需要页面之间跳转时，将查询字符串提前编码，<br>如：<a href="http://www.baidu.com/demo?demo=%D6%D0%B9%FA" target="_blank" rel="external">http://www.baidu.com/demo?demo=%D6%D0%B9%FA</a> (UTF-8编码)</li>
+<li>在Servlet的doGet()方法中添加<br>String value = new String(request.getParameter(“parameterName”).getBytes(“ISO-8859-1”)，”浏览器的编码方式”);</li>
+</ol>
+</li>
+<li>表单中的get和post数据包含中文<br>中文的编码方式取决于上文的contentType中的charset，有两种解决办法：<ol>
+<li>在Servlet的doPost()方法中添加request.setCharacterEncoding(“charset的值”);<font color="red">(仅对post有用)</font></li>
+<li>在Servlet的doPost()方法中添加<br>String value = new String(request.getParameter(“parameterName”).getBytes(“ISO-8859-1”)，”charset的值”);</li>
+</ol>
+</li>
+</ul>
+<p>三、原理</p>
+<p>我们通过上面的方法可以解决乱码问题，下面讲讲原理：</p>
+<ul>
+<li><p>客户端发来的数据都是经过一定格式编码的，类似于：String parameterName = “中国”.getBytes(“UTF-8”)，然后将数据发过来。</p>
+</li>
+<li><p>客户端接受数据，request.getParameter(“”)的作用就是对接收到的数据进行解码，默认使用ISO-8859-1进行解码，可以使用request.setCharacterEncoding(“”)进行设置，但仅对post有用。假如我们使用默认的ISO-8859-1，肯定乱码，因为编码跟解码不一致，那此时怎么办呢，引出了上文中的两种解决方案：使用request.setCharacterEncoding(“”)改变request.getParameter(“”)的解码方式或者new String(request.getParameter(“parameterName”).getBytes(“ISO-8859-1”)，”charset的值”)将request.getParameter(“”)解码的数据重新编码再解码。</p>
+</li>
+</ul>
+<p>四、其他</p>
+<p>在jsp中的页面使用response.setContentType()等设置字符集会破坏jsp容器自身的页面编码，会引起html中字符乱码，脚本不会乱，所以不建议设置。在开发中多采用page指令设置字符集。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">	response.setContentType("text/html;charset=UTF-8");</span><br><span class="line">	String str = new String("你好".getBytes("iso-8859-1"),"utf-8");</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</span><br><span class="line">&lt;title&gt;Insert title here&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;p&gt;你好&lt;/p&gt;</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&lt;%=str %&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="http://zgbeam.github.io/img/setContent.png" alt=""></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>在开发过程中，经常遇到中文乱码问题，以前总是解决就好，并没有对该问题总结一下，现在来总结一下开发过程中常见的中文乱码问题。</p>
+<p>一、有必要了解一些基本的编码知识：</p>
+<ul>
+<li>这篇<a href="http://www.ruanyifeng.com/]]>
+    </summary>
+    
+      <category term="JSP 中文乱码" scheme="http://zgbeam.github.io/tags/JSP-%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81/"/>
+    
+      <category term="J2EE" scheme="http://zgbeam.github.io/categories/J2EE/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[JSP开发中文乱码总结]]></title>
